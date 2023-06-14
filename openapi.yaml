@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Social Network Friends Service API
+  version: 1.0.0
+paths:
+  /users/{id}/friends:
+    get:
+      summary: Get user's friends
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/{id}/remove_friend:
+    post:
+      summary: Remove friend from user's friends list
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                friend_id:
+                  type: integer
+                  description: ID of the friend to be removed
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+  /friend_requests/send_friend_request:
+    post:
+      summary: Send friend request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sender:
+                  type: integer
+                  description: ID of the sender user
+                receiver:
+                  type: integer
+                  description: ID of the receiver user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+  /friend_requests/{id}/accept_friend_request:
+    post:
+      summary: Accept friend request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the friend request
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+  /friend_requests/{id}/decline_friend_request:
+    post:
+      summary: Decline friend request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID of the friend request
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+  /friend_requests/outgoing_friend_requests:
+    get:
+      summary: Get outgoing friend requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+  /friend_requests/incoming_friend_requests:
+    get:
+      summary: Get incoming friend requests for a user
+      parameters:
+        - in: query
+          name: user_id
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the user
+        username:
+          type: string
+          description: Username of the user
+    FriendRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the friend request
+        sender:
+          $ref: '#/components/schemas/User'
+        receiver:
+          $ref: '#/components/schemas/User'
+        status:
+          type: string
+          description: Status of the friend request (PENDING, ACCEPTED, DECLINED)
